@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Form</title>
+</head>
+<body>
+    <form action="http://jkorpela.fi/cgi-bin/echo.cgi" method="post">
+        <p>Input your login:        <input type="text" name="userLogin" autofocus></p>
+        <p>Input your password:     <input type="password" name="userPassword" ></p>
+        <p>Input your email:        <input type="email" name="userEmail" ></p>
+        <p>Input your phone:        <input type="tel" name="userPhone" ></p>
+        <p>Input your name:         <input type="text" name="userFirstName" ></p>
+        <p>Input your city:         <input type="text" name="userCity" ></p>
+        <p>Input your gender:  Male <input type="radio" name="userGender" value="male">
+        Female                      <input type="radio" name="userGender" value="female"></p>
+        <p>Input your birthday:     <input type="date" name="userBirthday"></p>
+        <p>Input goods which are you interested in: <input type="text" name="userGoods" maxlength="1024"></p>
+        <p>Input some photo:        <input type="file" name="userPhoto" accept="image/*"></p>
+        <input type="submit" value="Send form"> <input type="reset">
+
+    </form>
+</body>
+</html>
