@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles/styles.css">
+
+    <title>Todo app</title>
+</head>
+<body>
+
+<div id="app" class="app">
+    <div class="form-block">
+        <h1>Todo app</h1>
+        <form>
+            <div class="form-group">
+                <label for="titleInput">Task title</label>
+                <input type="text" class="form-control" id="titleInput">
+            </div>
+            <div class="form-group">
+                <label for="descriptionInput">Task description</label>
+                <input type="text" class="form-control" id="descriptionInput", maxlength="100">
+            </div>
+            <div class="form-group">
+                <label for="importanceSelect">Importance</label>
+                <select class="form-control" id="importanceSelect">
+                    <option>Low</option>
+                    <option>Medium</option>
+                    <option>High</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" id="createButton">Create</button>
+        </form>
+    </div>
+    <div class="cards-block" id="cardsBlock">
+    </div>
+
+</div>
+<script src="scripts/main.js"></script>
+
+</body>
+</html>
