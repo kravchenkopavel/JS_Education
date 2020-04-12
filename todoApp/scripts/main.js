@@ -75,25 +75,6 @@ class Card {
         this.init();
     }
 
-    attachEvents() {
-        let deleteButton =  this.card.querySelector('.delete-button');
-        deleteButton.addEventListener('click', event => {
-            event.preventDefault();
-
-        this.deleteCard();
-        });
-    }
-
-    deleteCard() {
-        let cardIndex = app.cardsArray.indexOf(this.cardData);
-        delete app.cardsArray[cardIndex];
-
-        let stringifyCardsArray = JSON.stringify(app.cardsArray);
-        localStorage.setItem('todoCards', stringifyCardsArray);
-
-        this.cardsBlock.removeChild(this.card);
-    }
-
     init() {
         this.createCard(this.cardData);
         this.attachEvents();
@@ -124,8 +105,25 @@ class Card {
             default:
                 return 'badge-success';
         }
+    }
 
+    attachEvents() {
+        let deleteButton =  this.card.querySelector('.delete-button');
+        deleteButton.addEventListener('click', event => {
+            event.preventDefault();
 
+        this.deleteCard();
+        });
+    }
+
+    deleteCard() {
+        let cardIndex = app.cardsArray.indexOf(this.cardData);
+        app.cardsArray.splice(cardIndex, 1);
+
+        let stringifyCardsArray = JSON.stringify(app.cardsArray);
+        localStorage.setItem('todoCards', stringifyCardsArray);
+
+        this.cardsBlock.removeChild(this.card);
     }
 }
 
