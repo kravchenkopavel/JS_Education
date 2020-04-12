@@ -28,15 +28,14 @@ class App {
                 let cardData = {
                     title: this.titleInput.value,
                     description: this.descriptionInput.value,
-                    importance: this.importanceSelect.value
+                    importance: this.importanceSelect.value,
+                    status: 'New'
                 };
 
                 new Card(cardData);
                 this.clearForm();
 
-                let tempCardData = cardData;
-                tempCardData.status = false;
-                this.cardsArray.push(tempCardData);
+                this.cardsArray.push(cardData);
                 this.addCardToStorage();
             });
     }
@@ -85,9 +84,10 @@ class Card {
 
         let cardHTML = `<div class="card-body">
                         <span class="badge ${this.importanceClass}">${cardData.importance}</span>
+                        <span class="badge ${this.statusClass.className} status">${cardData.status}</span>
                         <h5 class="card-title">${cardData.title}</h5>
                         <p class="card-text">${cardData.description}</p>
-                        <a href="#" class="btn btn-primary complete-button">Complete</a>
+                        <a href="#" class="btn btn-primary complete-button ${this.statusClass.buttonDisable}">Complete</a>
                         <a href="#" class="btn btn-info edit-button">Edit</a>
                         <a href="#" class="btn btn-danger delete-button">Delete</a>
                         </div>`;
@@ -107,12 +107,35 @@ class Card {
         }
     }
 
+    get statusClass() {
+        let obj = {
+            className: "",
+            buttonDisable: ""
+        };
+
+        switch (this.cardData.status) {
+            case 'Completed':
+                obj.className = 'badge-secondary';
+                obj.buttonDisable = 'disabled';
+                return obj;
+            default:
+                obj.className = 'badge-light';
+                obj.buttonDisable = 'enabled';
+                return obj;
+        }
+    }
+
     attachEvents() {
         let deleteButton =  this.card.querySelector('.delete-button');
         deleteButton.addEventListener('click', event => {
             event.preventDefault();
+            this.deleteCard();
+        });
 
-        this.deleteCard();
+        let completeButton =  this.card.querySelector('.complete-button');
+        completeButton.addEventListener('click', event => {
+            event.preventDefault();
+            this.completeCard();
         });
     }
 
@@ -124,6 +147,16 @@ class Card {
         localStorage.setItem('todoCards', stringifyCardsArray);
 
         this.cardsBlock.removeChild(this.card);
+    }
+
+    completeCard() {
+        this.cardData.status = 'Completed';
+
+        let stringifyCardsArray = JSON.stringify(app.cardsArray);
+        localStorage.setItem('todoCards', stringifyCardsArray);
+
+        this.card.innerHTML = this.card.innerHTML.replace('<span class="badge badge-light status">New</span>', '<span class="badge badge-secondary status">Completed</span>');
+        this.card.innerHTML = this.card.innerHTML.replace('class="btn btn-primary complete-button"', 'class="btn btn-primary complete-button disabled"');
     }
 }
 

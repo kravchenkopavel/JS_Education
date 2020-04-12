@@ -30,6 +30,12 @@ body {
     margin-bottom: 5px;
 }
 
+.status{
+    float: right;
+    text-align: right;
+    margin-bottom: 5px;
+}
+
 .card-text {
     min-height: 100px;
 }
