@@ -71,6 +71,17 @@ class Card {
         this.cardData = cardData;
         this.cardsBlock = document.querySelector('#cardsBlock');
         this.card = document.createElement('div');
+        this.cardHTMLObj = {
+            cardBody: null,
+            badgeImportance: null,
+            badgeStatus: null,
+            cardTitle: null,
+            cardText: null,
+            btnCompleteReopen: null,
+            btnEdit: null,
+            btnDelete: null,
+            closeDiv: null
+        };
         this.init();
     }
 
@@ -79,31 +90,33 @@ class Card {
         this.attachEvents();
     }
 
-    createCard(cardData) {
+    createCard() {
         this.card.classList.add('card');
 
-        let cardHTML = `<div class="card-body">
-                        <span class="badge ${this.importanceClass}">${cardData.importance}</span>
-                        <span class="badge ${this.statusClass.classNameBadge} status">${cardData.status}</span>
-                        <h5 class="card-title">${cardData.title}</h5>
-                        <p class="card-text">${cardData.description}</p>
-                        <a href="#" class="btn ${this.statusClass.classNameButton}">${this.statusClass.textButton}</a>
-                        <a href="#" class="btn btn-info edit-button">Edit</a>
-                        <a href="#" class="btn btn-danger delete-button">Delete</a>
-                        </div>`;
+        this.cardHTMLObj = {
+            cardBody: "<div class=\"card-body\">",
+            badgeImportance: "<span class=\"badge " + this.importanceClass + "\">" + this.cardData.importance + "</span>",
+            badgeStatus: "<span class=\"badge " + this.statusClass.classNameBadge + " status\">" + this.cardData.status + "</span>",
+            cardTitle: "<h5 class=\"card-title\">" + this.cardData.title + "</h5>",
+            cardText: "<p class=\"card-text\">" + this.cardData.description + "</p>",
+            btnCompleteReopen: "<a href=\"#\" class=\"btn " + this.statusClass.classNameButton + "\">" + this.statusClass.textButton + "</a>",
+            btnEdit: "<a href=\"#\" class=\"btn btn-info edit-button\">Edit</a>",
+            btnDelete: "<a href=\"#\" class=\"btn btn-danger delete-button\">Delete</a>",
+            closeDiv: "</div>"
+        };
 
-        this.card.innerHTML = cardHTML;
+        this.card.innerHTML = Object.values(this.cardHTMLObj).join('\n');
         this.cardsBlock.appendChild(this.card);
     }
 
     get importanceClass() {
         switch (this.cardData.importance) {
-            case 'High':
-                return 'badge-danger';
-            case 'Medium':
-                return 'badge-warning';
+            case "High":
+                return "badge-danger";
+            case "Medium":
+                return "badge-warning";
             default:
-                return 'badge-success';
+                return "badge-success";
         }
     }
 
@@ -173,9 +186,11 @@ class Card {
         let stringifyCardsArray = JSON.stringify(app.cardsArray);
         localStorage.setItem('todoCards', stringifyCardsArray);
 
-        this.card.innerHTML = this.card.innerHTML.replace('<span class="badge badge-light status">New</span>', '<span class="badge badge-secondary status">Completed</span>');
-        this.card.innerHTML = this.card.innerHTML.replace('<span class="badge badge-warning status">Reopened</span>', '<span class="badge badge-secondary status">Completed</span>');
-        this.card.innerHTML = this.card.innerHTML.replace('<a href="#" class="btn btn-primary complete-button">Complete</a>', '<a href="#" class="btn btn-warning reopen-button">Reopen</a>');
+        this.cardHTMLObj.badgeStatus = "<span class=\"badge " + this.statusClass.classNameBadge + " status\">" + this.cardData.status + "</span>",
+        this.cardHTMLObj.btnCompleteReopen = "<a href=\"#\" class=\"btn " + this.statusClass.classNameButton + "\">" + this.statusClass.textButton + "</a>";
+        this.card.innerHTML = Object.values(this.cardHTMLObj).join('\n');
+
+        this.attachEvents();
     }
 
     reopenCard() {
@@ -184,8 +199,11 @@ class Card {
         let stringifyCardsArray = JSON.stringify(app.cardsArray);
         localStorage.setItem('todoCards', stringifyCardsArray);
 
-        this.card.innerHTML = this.card.innerHTML.replace('<span class="badge badge-secondary status">Completed</span>', '<span class="badge badge-warning status">Reopened</span>');
-        this.card.innerHTML = this.card.innerHTML.replace('<a href="#" class="btn btn-warning reopen-button">Reopen</a>', '<a href="#" class="btn btn-primary complete-button">Complete</a>');
+        this.cardHTMLObj.badgeStatus = "<span class=\"badge " + this.statusClass.classNameBadge + " status\">" + this.cardData.status + "</span>",
+        this.cardHTMLObj.btnCompleteReopen = "<a href=\"#\" class=\"btn " + this.statusClass.classNameButton + "\">" + this.statusClass.textButton + "</a>";
+        this.card.innerHTML = Object.values(this.cardHTMLObj).join('\n');
+
+        this.attachEvents();
     }
 }
 
