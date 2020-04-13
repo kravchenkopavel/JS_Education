@@ -156,7 +156,7 @@ class Card {
         localStorage.setItem('todoCards', stringifyCardsArray);
 
         this.card.innerHTML = this.card.innerHTML.replace('<span class="badge badge-light status">New</span>', '<span class="badge badge-secondary status">Completed</span>');
-        this.card.innerHTML = this.card.innerHTML.replace('class="btn btn-primary complete-button"', 'class="btn btn-primary complete-button disabled"');
+        this.card.innerHTML = this.card.innerHTML.replace('class="btn btn-primary complete-button enabled"', 'class="btn btn-primary complete-button disabled"');
     }
 }
 
