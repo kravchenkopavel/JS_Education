@@ -186,7 +186,7 @@ class Card {
         let stringifyCardsArray = JSON.stringify(app.cardsArray);
         localStorage.setItem('todoCards', stringifyCardsArray);
 
-        this.cardHTMLObj.badgeStatus = "<span class=\"badge " + this.statusClass.classNameBadge + " status\">" + this.cardData.status + "</span>",
+        this.cardHTMLObj.badgeStatus = "<span class=\"badge " + this.statusClass.classNameBadge + " status\">" + this.cardData.status + "</span>";
         this.cardHTMLObj.btnCompleteReopen = "<a href=\"#\" class=\"btn " + this.statusClass.classNameButton + "\">" + this.statusClass.textButton + "</a>";
         this.card.innerHTML = Object.values(this.cardHTMLObj).join('\n');
 
@@ -199,7 +199,7 @@ class Card {
         let stringifyCardsArray = JSON.stringify(app.cardsArray);
         localStorage.setItem('todoCards', stringifyCardsArray);
 
-        this.cardHTMLObj.badgeStatus = "<span class=\"badge " + this.statusClass.classNameBadge + " status\">" + this.cardData.status + "</span>",
+        this.cardHTMLObj.badgeStatus = "<span class=\"badge " + this.statusClass.classNameBadge + " status\">" + this.cardData.status + "</span>";
         this.cardHTMLObj.btnCompleteReopen = "<a href=\"#\" class=\"btn " + this.statusClass.classNameButton + "\">" + this.statusClass.textButton + "</a>";
         this.card.innerHTML = Object.values(this.cardHTMLObj).join('\n');
 
