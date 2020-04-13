@@ -84,10 +84,10 @@ class Card {
 
         let cardHTML = `<div class="card-body">
                         <span class="badge ${this.importanceClass}">${cardData.importance}</span>
-                        <span class="badge ${this.statusClass.className} status">${cardData.status}</span>
+                        <span class="badge ${this.statusClass.classNameBadge} status">${cardData.status}</span>
                         <h5 class="card-title">${cardData.title}</h5>
                         <p class="card-text">${cardData.description}</p>
-                        <a href="#" class="btn btn-primary complete-button ${this.statusClass.buttonDisable}">Complete</a>
+                        <a href="#" class="btn ${this.statusClass.classNameButton}">${this.statusClass.textButton}</a>
                         <a href="#" class="btn btn-info edit-button">Edit</a>
                         <a href="#" class="btn btn-danger delete-button">Delete</a>
                         </div>`;
@@ -109,18 +109,26 @@ class Card {
 
     get statusClass() {
         let obj = {
-            className: "",
-            buttonDisable: ""
+            classNameBadge: "",
+            classNameButton: "",
+            textButton: ""
         };
 
         switch (this.cardData.status) {
             case 'Completed':
-                obj.className = 'badge-secondary';
-                obj.buttonDisable = 'disabled';
+                obj.classNameBadge = 'badge-secondary';
+                obj.classNameButton = 'btn-warning reopen-button';
+                obj.textButton = 'Reopen';
                 return obj;
-            default:
-                obj.className = 'badge-light';
-                obj.buttonDisable = 'enabled';
+            case 'Reopened':
+                obj.classNameBadge = 'badge-warning';
+                obj.classNameButton = 'btn-primary complete-button';
+                obj.textButton = 'Complete';
+                return obj;
+            case 'New':
+                obj.classNameBadge = 'badge-light';
+                obj.classNameButton = 'btn-primary complete-button';
+                obj.textButton = 'Complete';
                 return obj;
         }
     }
@@ -133,10 +141,20 @@ class Card {
         });
 
         let completeButton =  this.card.querySelector('.complete-button');
-        completeButton.addEventListener('click', event => {
-            event.preventDefault();
-            this.completeCard();
-        });
+        if (completeButton) {
+            completeButton.addEventListener('click', event => {
+                event.preventDefault();
+                this.completeCard();
+            });
+        }
+
+        let reopenButton =  this.card.querySelector('.reopen-button');
+        if (reopenButton) {
+            reopenButton.addEventListener('click', event => {
+                event.preventDefault();
+                this.reopenCard();
+            });
+        }
     }
 
     deleteCard() {
@@ -156,7 +174,18 @@ class Card {
         localStorage.setItem('todoCards', stringifyCardsArray);
 
         this.card.innerHTML = this.card.innerHTML.replace('<span class="badge badge-light status">New</span>', '<span class="badge badge-secondary status">Completed</span>');
-        this.card.innerHTML = this.card.innerHTML.replace('class="btn btn-primary complete-button enabled"', 'class="btn btn-primary complete-button disabled"');
+        this.card.innerHTML = this.card.innerHTML.replace('<span class="badge badge-warning status">Reopened</span>', '<span class="badge badge-secondary status">Completed</span>');
+        this.card.innerHTML = this.card.innerHTML.replace('<a href="#" class="btn btn-primary complete-button">Complete</a>', '<a href="#" class="btn btn-warning reopen-button">Reopen</a>');
+    }
+
+    reopenCard() {
+        this.cardData.status = 'Reopened';
+
+        let stringifyCardsArray = JSON.stringify(app.cardsArray);
+        localStorage.setItem('todoCards', stringifyCardsArray);
+
+        this.card.innerHTML = this.card.innerHTML.replace('<span class="badge badge-secondary status">Completed</span>', '<span class="badge badge-warning status">Reopened</span>');
+        this.card.innerHTML = this.card.innerHTML.replace('<a href="#" class="btn btn-warning reopen-button">Reopen</a>', '<a href="#" class="btn btn-primary complete-button">Complete</a>');
     }
 }
 
