@@ -9,7 +9,11 @@ class App {
         this.titleInput = this.element.querySelector('#titleInput');
         this.descriptionInput = this.element.querySelector('#descriptionInput');
         this.importanceSelect = this.element.querySelector('#importanceSelect');
-        this.cardsArray = [];
+        this.createButton = this.element.querySelector('#createButton');
+        this.editButton = this.element.querySelector('#editButton');
+        this.cancelButton = this.element.querySelector('#cancelButton');
+        this.cardsDataArray = [];
+        this.editedIndex = null;
         this.init();
     }
 
@@ -19,32 +23,60 @@ class App {
     }
 
     attachEvents() {
-        createButton.addEventListener('click',
+        this.createButton.addEventListener('click',
             event => {
                 event.preventDefault();
-
-                let createButton = this.element.querySelector('#createButton');
-
-                let cardData = {
-                    title: this.titleInput.value,
-                    description: this.descriptionInput.value,
-                    importance: this.importanceSelect.value,
-                    status: 'New'
-                };
-
-                new Card(cardData);
-                this.clearForm();
-
-                this.cardsArray.push(cardData);
-                this.addCardToStorage();
+                this.createCard();
             });
+
+        this.editButton.addEventListener('click',
+            event => {
+                event.preventDefault();
+                this.updateCardData();
+                this.addCardToStorage();
+                this.editedCard.card.innerHTML = Object.values(this.editedCard.cardHTML).join('\n');
+                this.hideButton(app.editButton);
+                this.hideButton(app.cancelButton);
+                this.showButton(app.createButton);
+            });
+    }
+
+    updateCardData() {
+        let cardData = this.cardsDataArray[this.editedIndex];
+        cardData.title = this.titleInput.value;
+        cardData.description = this.descriptionInput.value;
+        cardData.importance = this.importanceSelect.value;
+        this.cardsDataArray[this.editedIndex] = cardData;
+    }
+
+    createCard() {
+        let cardData = {
+            title: this.titleInput.value,
+            description: this.descriptionInput.value,
+            importance: this.importanceSelect.value,
+            status: 'New'
+        };
+
+        new Card(cardData);
+        this.clearForm();
+
+        this.cardsDataArray.push(cardData);
+        this.addCardToStorage();
+    }
+
+    hideButton(btn) {
+        btn.style.display = "none";
+    }
+
+    showButton(btn) {
+        btn.style.display = "inline-block";
     }
 
     checkStorage() {
         let storageData = localStorage.getItem('todoCards');
         if (storageData) {
-            this.cardsArray = JSON.parse(storageData);
-            this.cardsArray.forEach(cardData => {
+            this.cardsDataArray = JSON.parse(storageData);
+            this.cardsDataArray.forEach(cardData => {
                 if (cardData) {
                     new Card(cardData);
                 }
@@ -54,7 +86,7 @@ class App {
     }
 
     addCardToStorage() {
-        let stringifyCardsArray = JSON.stringify(this.cardsArray);
+        let stringifyCardsArray = JSON.stringify(this.cardsDataArray);
         localStorage.setItem('todoCards', stringifyCardsArray);
     }
 
@@ -62,6 +94,14 @@ class App {
         this.titleInput.value = '';
         this.descriptionInput.value = '';
         this.importanceSelect.value = 'Low';
+    }
+
+    fillForm(card) {
+        this.editedCard = card;
+        this.editedIndex = this.cardsDataArray.indexOf(card.cardData);
+        this.titleInput.value = card.cardData.title;
+        this.descriptionInput.value = card.cardData.description;
+        this.importanceSelect.value = card.cardData.importance;
     }
 
 }
@@ -92,7 +132,12 @@ class Card {
 
     createCard() {
         this.card.classList.add('card');
+        this.cardHTML;
+        this.card.innerHTML = Object.values(this.cardHTMLObj).join('\n');
+        this.cardsBlock.appendChild(this.card);
+    }
 
+    get cardHTML() {
         this.cardHTMLObj = {
             cardBody: "<div class=\"card-body\">",
             badgeImportance: "<span class=\"badge " + this.importanceClass + "\">" + this.cardData.importance + "</span>",
@@ -104,9 +149,7 @@ class Card {
             btnDelete: "<a href=\"#\" class=\"btn btn-danger delete-button\">Delete</a>",
             closeDiv: "</div>"
         };
-
-        this.card.innerHTML = Object.values(this.cardHTMLObj).join('\n');
-        this.cardsBlock.appendChild(this.card);
+        return this.cardHTMLObj;
     }
 
     get importanceClass() {
@@ -168,13 +211,24 @@ class Card {
                 this.reopenCard();
             });
         }
+
+        let editButton =  this.card.querySelector('.edit-button');
+        editButton.addEventListener('click', event => {
+            event.preventDefault();
+
+            app.fillForm(this);
+            app.hideButton(app.createButton);
+            app.showButton(app.editButton);
+            app.showButton(app.cancelButton);
+        });
+
     }
 
     deleteCard() {
-        let cardIndex = app.cardsArray.indexOf(this.cardData);
-        app.cardsArray.splice(cardIndex, 1);
+        let cardIndex = app.cardsDataArray.indexOf(this.cardData);
+        app.cardsDataArray.splice(cardIndex, 1);
 
-        let stringifyCardsArray = JSON.stringify(app.cardsArray);
+        let stringifyCardsArray = JSON.stringify(app.cardsDataArray);
         localStorage.setItem('todoCards', stringifyCardsArray);
 
         this.cardsBlock.removeChild(this.card);
@@ -183,7 +237,7 @@ class Card {
     completeCard() {
         this.cardData.status = 'Completed';
 
-        let stringifyCardsArray = JSON.stringify(app.cardsArray);
+        let stringifyCardsArray = JSON.stringify(app.cardsDataArray);
         localStorage.setItem('todoCards', stringifyCardsArray);
 
         this.cardHTMLObj.badgeStatus = "<span class=\"badge " + this.statusClass.classNameBadge + " status\">" + this.cardData.status + "</span>";
@@ -196,7 +250,7 @@ class Card {
     reopenCard() {
         this.cardData.status = 'Reopened';
 
-        let stringifyCardsArray = JSON.stringify(app.cardsArray);
+        let stringifyCardsArray = JSON.stringify(app.cardsDataArray);
         localStorage.setItem('todoCards', stringifyCardsArray);
 
         this.cardHTMLObj.badgeStatus = "<span class=\"badge " + this.statusClass.classNameBadge + " status\">" + this.cardData.status + "</span>";
@@ -210,3 +264,9 @@ class Card {
 let appElement = document.querySelector('#app');
 
 let app = new App(appElement);
+
+//todo: add cancel edit card
+//todo: add sort cards
+//todo: add data creation
+//todo: add history modification card
+//todo: add export to file
