@@ -43,6 +43,15 @@ class App {
                 this.hideButton(app.cancelButton);
                 this.showButton(app.createButton);
             });
+
+        this.cancelButton.addEventListener('click',
+            event => {
+                event.preventDefault();
+                this.clearForm();
+                this.hideButton(app.editButton);
+                this.hideButton(app.cancelButton);
+                this.showButton(app.createButton);
+            });
     }
 
     updateCardData() {
@@ -207,23 +216,9 @@ class Card {
         let editButton =  this.cardUI.querySelector('.edit-button');
         editButton.addEventListener('click', event => {
             event.preventDefault();
-
-            app.fillForm(this);
-            app.hideButton(app.createButton);
-            app.showButton(app.editButton);
-            app.showButton(app.cancelButton);
+            this.editCard();
         });
 
-    }
-
-    deleteCard() {
-        let cardIndex = app.cardsArray.indexOf(this);
-        app.cardsArray.splice(cardIndex, 1);
-
-        let stringifyCardsArray = JSON.stringify(app.cardsArray);
-        localStorage.setItem('todoCards', stringifyCardsArray);
-
-        this.cardsBlock.removeChild(this.cardUI);
     }
 
     completeCard() {
@@ -245,13 +240,30 @@ class Card {
 
         this.attachEvents();
     }
+
+    editCard() {
+        app.fillForm(this);
+        app.hideButton(app.createButton);
+        app.showButton(app.editButton);
+        app.showButton(app.cancelButton);
+    }
+
+    deleteCard() {
+        let cardIndex = app.cardsArray.indexOf(this);
+        app.cardsArray.splice(cardIndex, 1);
+
+        let stringifyCardsArray = JSON.stringify(app.cardsArray);
+        localStorage.setItem('todoCards', stringifyCardsArray);
+
+        this.cardsBlock.removeChild(this.cardUI);
+    }
 }
 
 let appElement = document.querySelector('#app');
 
 let app = new App(appElement);
 
-//todo: add cancel edit card
+//todo: refactor completeReopen btn in Card class
 //todo: add sort cards
 //todo: add data creation
 //todo: add history modification card
