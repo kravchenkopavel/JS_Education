@@ -186,6 +186,8 @@ class App {
         this.editedCard.cardData.title = this.titleInput.value;
         this.editedCard.cardData.description = this.descriptionInput.value;
         this.editedCard.cardData.importance = this.importanceSelect.value;
+        this.editedCard.cardData.dataEditing = new Date();
+        this.editedCard.history.push(Object.assign({}, this.editedCard.cardData));
         this.cardsArray[this.editedIndex] = this.editedCard;
     }
 
@@ -194,7 +196,9 @@ class App {
             title: this.titleInput.value,
             description: this.descriptionInput.value,
             importance: this.importanceSelect.value,
-            status: 'New'
+            status: 'New',
+            dataCreation: new Date(),
+            dataEditing: new Date()
         };
 
         this.cardsArray.push(new Card(cardData));
@@ -248,6 +252,8 @@ class Card {
         this.cardData = cardData;
         this.cardsBlock = document.querySelector('#cardsBlock');
         this.cardUI = document.createElement('div');
+        this.history = [];
+        this.history.push(Object.assign({}, this.cardData));
         this.init();
     }
 
@@ -347,6 +353,8 @@ class Card {
 
     completeCard() {
         this.cardData.status = 'Completed';
+        this.cardData.dataEditing = new Date();
+        this.history.push(Object.assign({}, this.cardData));
         this.updateCardUI();
 
         let stringifyCardsArray = JSON.stringify(app.cardsArray);
@@ -357,6 +365,8 @@ class Card {
 
     reopenCard() {
         this.cardData.status = 'Reopened';
+        this.cardData.dataEditing = new Date();
+        this.history.push(Object.assign({}, this.cardData));
         this.updateCardUI();
 
         let stringifyCardsArray = JSON.stringify(app.cardsArray);
@@ -388,6 +398,4 @@ let appElement = document.querySelector('#app');
 
 let app = new App(appElement);
 
-//todo: add data creation
-//todo: add history modification card
 //todo: add export to file
