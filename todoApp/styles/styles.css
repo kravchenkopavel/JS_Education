@@ -12,6 +12,10 @@ body {
     flex-shrink: 0;
 }
 
+.form-block .btn {
+    margin-bottom: 1rem;
+}
+
 .cards-block {
     align-items: flex-start;
     width: 60%;

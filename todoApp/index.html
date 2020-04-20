@@ -35,6 +35,19 @@
             <button type="submit" class="btn btn-primary" id="createButton">Create</button>
             <button type="submit" class="btn btn-primary" id="editButton" style="display: none">Edit</button>
             <button type="submit" class="btn btn-primary" id="cancelButton" style="display: none">Cancel</button>
+            <div class="form-group" id="sortSelectGroup" style="display: block">
+                <label for="sortSelect">Sort by:</label>
+                <select class="form-control" id="sortSelect">
+                    <option disabled selected value> -- select an option -- </option>
+                    <option>Importance: from Low to High</option>
+                    <option>Importance: from High to Low</option>
+                    <option>Status: Completed first</option>
+                    <option>Status: New first</option>
+                    <option>Status: Reopened first</option>
+                    <option>Title: from A to Z</option>
+                    <option>Title: from Z to A</option>
+                </select>
+            </div>
         </form>
     </div>
     <div class="cards-block" id="cardsBlock">
