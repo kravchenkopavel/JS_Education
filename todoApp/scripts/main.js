@@ -145,7 +145,8 @@ class Card {
             badgeStatus: "<span class=\"badge " + this.statusClass.classNameBadge + " status\">" + this.cardData.status + "</span>",
             cardTitle: "<h5 class=\"card-title\">" + this.cardData.title + "</h5>",
             cardText: "<p class=\"card-text\">" + this.cardData.description + "</p>",
-            btnCompleteReopen: "<a href=\"#\" class=\"btn " + this.statusClass.classNameButton + "\">" + this.statusClass.textButton + "</a>",
+            btnComplete: "<a href=\"#\" class=\"btn btn-primary complete-button\" style=\"" + this.statusClass.completeButtonStyle + "\">Complete</a>",
+            btnReopen: "<a href=\"#\" class=\"btn btn-warning reopen-button\" style=\"" + this.statusClass.reopenButtonStyle + "\">Reopen</a>",
             btnEdit: "<a href=\"#\" class=\"btn btn-info edit-button\">Edit</a>",
             btnDelete: "<a href=\"#\" class=\"btn btn-danger delete-button\">Delete</a>",
             closeDiv: "</div>"
@@ -167,25 +168,25 @@ class Card {
     get statusClass() {
         let obj = {
             classNameBadge: "",
-            classNameButton: "",
-            textButton: ""
+            completeButtonStyle: "",
+            reopenButtonStyle: ""
         };
 
         switch (this.cardData.status) {
             case 'Completed':
                 obj.classNameBadge = 'badge-secondary';
-                obj.classNameButton = 'btn-warning reopen-button';
-                obj.textButton = 'Reopen';
+                obj.completeButtonStyle = 'display: none';
+                obj.reopenButtonStyle = 'display: inline-block';
                 return obj;
             case 'Reopened':
                 obj.classNameBadge = 'badge-warning';
-                obj.classNameButton = 'btn-primary complete-button';
-                obj.textButton = 'Complete';
+                obj.completeButtonStyle = 'display: inline-block';
+                obj.reopenButtonStyle = 'display: none';
                 return obj;
             case 'New':
                 obj.classNameBadge = 'badge-light';
-                obj.classNameButton = 'btn-primary complete-button';
-                obj.textButton = 'Complete';
+                obj.completeButtonStyle = 'display: inline-block';
+                obj.reopenButtonStyle = 'display: none';
                 return obj;
         }
     }
@@ -198,27 +199,22 @@ class Card {
         });
 
         let completeButton =  this.cardUI.querySelector('.complete-button');
-        if (completeButton) {
-            completeButton.addEventListener('click', event => {
+        completeButton.addEventListener('click', event => {
                 event.preventDefault();
                 this.completeCard();
-            });
-        }
+        });
 
         let reopenButton =  this.cardUI.querySelector('.reopen-button');
-        if (reopenButton) {
-            reopenButton.addEventListener('click', event => {
+        reopenButton.addEventListener('click', event => {
                 event.preventDefault();
                 this.reopenCard();
-            });
-        }
+        });
 
         let editButton =  this.cardUI.querySelector('.edit-button');
         editButton.addEventListener('click', event => {
             event.preventDefault();
             this.editCard();
         });
-
     }
 
     completeCard() {
@@ -263,7 +259,6 @@ let appElement = document.querySelector('#app');
 
 let app = new App(appElement);
 
-//todo: refactor completeReopen btn in Card class
 //todo: add sort cards
 //todo: add data creation
 //todo: add history modification card
