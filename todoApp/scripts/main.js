@@ -46,6 +46,9 @@ class App {
         this.editButton.addEventListener('click',
             event => {
                 event.preventDefault();
+                if ( !this.checkForm() ) {
+                    return;
+                }
                 this.updateCardData();
                 this.editedCard.updateCardUI();
                 this.editedCard.attachEvents();
@@ -73,16 +76,19 @@ class App {
             event => {
                 event.preventDefault();
                 let message = this.cardsArray.length > 1 ? "You are going to delete all cards. Are you sure?" : "You are going to delete card. Are you sure?";
-                if (confirm(message)) {
-                    this.deleteAllCards();
-                    this.manageDeleteButton();
-                    this.manageSortSelectGroup();
+                if ( !confirm(message) ) {
+                    return;
                 }
+                this.clearForm();
+                this.deleteAllCards();
+                this.manageDeleteButton();
+                this.manageSortSelectGroup();
             });
 
         this.sortSelect.addEventListener('change',
             event => {
                 event.preventDefault();
+                this.clearForm();
                 this.sortCards();
                 this.addCardToStorage();
                 App.clearCardsBlock();
@@ -322,6 +328,9 @@ class App {
         this.titleInput.value = '';
         this.descriptionInput.value = '';
         this.importanceSelect.value = 'Low';
+        this.requiredFields.forEach(field => {
+            field.classList.remove('is-invalid');
+        });
     }
 
     fillForm(card) {
@@ -416,23 +425,27 @@ class Card {
         let deleteButton =  this.cardUI.querySelector('.delete-button');
         deleteButton.addEventListener('click', event => {
             event.preventDefault();
-            if (confirm("You are going to delete card. Are you sure?")) {
-                this.deleteCard();
-                app.manageDeleteButton();
-                app.manageSortSelectGroup();
+            app.clearForm();
+            if ( !confirm("You are going to delete card. Are you sure?") ) {
+                return;
             }
+            this.deleteCard();
+            app.manageDeleteButton();
+            app.manageSortSelectGroup();
         });
 
         let completeButton =  this.cardUI.querySelector('.complete-button');
         completeButton.addEventListener('click', event => {
-                event.preventDefault();
-                this.completeCard();
+            event.preventDefault();
+            app.clearForm();
+            this.completeCard();
         });
 
         let reopenButton =  this.cardUI.querySelector('.reopen-button');
         reopenButton.addEventListener('click', event => {
-                event.preventDefault();
-                this.reopenCard();
+            event.preventDefault();
+            app.clearForm();
+            this.reopenCard();
         });
 
         let editButton =  this.cardUI.querySelector('.edit-button');
@@ -467,6 +480,7 @@ class Card {
     }
 
     editCard() {
+        app.clearForm();
         app.fillForm(this);
         App.hideButton(app.createButton);
         App.hideButton(app.deleteButton);
