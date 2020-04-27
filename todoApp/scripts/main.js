@@ -52,6 +52,8 @@ class App {
                 this.updateCardData();
                 this.editedCard.updateCardUI();
                 this.editedCard.attachEvents();
+                this.editedCard.enableCardButtons();
+                this.editedCard.cardUI.style.backgroundColor = "";
                 this.addCardToStorage();
                 this.clearForm();
                 App.hideButton(app.editButton);
@@ -64,6 +66,8 @@ class App {
         this.cancelButton.addEventListener('click',
             event => {
                 event.preventDefault();
+                this.editedCard.enableCardButtons();
+                this.editedCard.cardUI.style.backgroundColor = "";
                 this.clearForm();
                 App.hideButton(app.editButton);
                 App.hideButton(app.cancelButton);
@@ -422,8 +426,8 @@ class Card {
     }
 
     attachEvents() {
-        let deleteButton =  this.cardUI.querySelector('.delete-button');
-        deleteButton.addEventListener('click', event => {
+        this.deleteButton =  this.cardUI.querySelector('.delete-button');
+        this.deleteButton.addEventListener('click', event => {
             event.preventDefault();
             app.clearForm();
             if ( !confirm("You are going to delete card. Are you sure?") ) {
@@ -434,25 +438,27 @@ class Card {
             app.manageSortSelectGroup();
         });
 
-        let completeButton =  this.cardUI.querySelector('.complete-button');
-        completeButton.addEventListener('click', event => {
+        this.completeButton =  this.cardUI.querySelector('.complete-button');
+        this.completeButton.addEventListener('click', event => {
             event.preventDefault();
             app.clearForm();
             this.completeCard();
         });
 
-        let reopenButton =  this.cardUI.querySelector('.reopen-button');
-        reopenButton.addEventListener('click', event => {
+        this.reopenButton =  this.cardUI.querySelector('.reopen-button');
+        this.reopenButton.addEventListener('click', event => {
             event.preventDefault();
             app.clearForm();
             this.reopenCard();
         });
 
-        let editButton =  this.cardUI.querySelector('.edit-button');
-        editButton.addEventListener('click', event => {
+        this.editButton =  this.cardUI.querySelector('.edit-button');
+        this.editButton.addEventListener('click', event => {
             event.preventDefault();
             this.editCard();
         });
+
+        this.cardButtonsArray = [this.completeButton, this.reopenButton, this.editButton, this.deleteButton];
     }
 
     completeCard() {
@@ -480,6 +486,8 @@ class Card {
     }
 
     editCard() {
+        this.disableCardButtons();
+        this.cardUI.style.backgroundColor = "grey";
         app.clearForm();
         app.fillForm(this);
         App.hideButton(app.createButton);
@@ -498,12 +506,23 @@ class Card {
 
         this.cardsBlock.removeChild(this.cardUI);
     }
+
+    disableCardButtons() {
+        this.cardButtonsArray.forEach(btn => {
+           btn.classList.add('disabled');
+        });
+    }
+
+    enableCardButtons() {
+        this.cardButtonsArray.forEach(btn => {
+            btn.classList.remove('disabled');
+        });
+    }
 }
 
 let appElement = document.querySelector('#app');
 
 let app = new App(appElement);
 
-//todo: add manage card block during editing (disable btns, fill color, etc)
 //todo: add choose several cards for delete
 //todo: add export to file
