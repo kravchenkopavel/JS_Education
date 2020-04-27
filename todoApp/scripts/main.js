@@ -16,6 +16,8 @@ class App {
         this.sortSelect = this.element.querySelector('#sortSelect');
         this.sortSelectGroup = this.element.querySelector('#sortSelectGroup');
 
+        this.requiredFields = [this.titleInput, this.descriptionInput];
+
         this.cardsArray = [];
         this.editedIndex = null;
         this.editedCard = null;
@@ -33,6 +35,9 @@ class App {
         this.createButton.addEventListener('click',
             event => {
                 event.preventDefault();
+                if ( !this.checkForm() ) {
+                    return;
+                }
                 this.createCard();
                 this.manageDeleteButton();
                 this.manageSortSelectGroup();
@@ -46,10 +51,10 @@ class App {
                 this.editedCard.attachEvents();
                 this.addCardToStorage();
                 this.clearForm();
-                this.hideButton(app.editButton);
-                this.hideButton(app.cancelButton);
-                this.showButton(app.createButton);
-                this.showButton(app.deleteButton);
+                App.hideButton(app.editButton);
+                App.hideButton(app.cancelButton);
+                App.showButton(app.createButton);
+                App.showButton(app.deleteButton);
                 this.manageSortSelectGroup();
             });
 
@@ -57,10 +62,10 @@ class App {
             event => {
                 event.preventDefault();
                 this.clearForm();
-                this.hideButton(app.editButton);
-                this.hideButton(app.cancelButton);
-                this.showButton(app.createButton);
-                this.showButton(app.deleteButton);
+                App.hideButton(app.editButton);
+                App.hideButton(app.cancelButton);
+                App.showButton(app.createButton);
+                App.showButton(app.deleteButton);
                 this.manageSortSelectGroup();
             });
 
@@ -83,6 +88,40 @@ class App {
                 App.clearCardsBlock();
                 this.checkStorage();
             });
+
+        this.requiredFields.forEach(field => {
+            field.addEventListener('focus',
+                event => {
+                    event.preventDefault();
+                    field.classList.remove('is-invalid');
+           });
+        });
+    }
+
+    checkForm() {
+        let invalidFields = [];
+        let isFormValid = true;
+
+        this.requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isFormValid = false;
+                invalidFields.push(field);
+            }
+        });
+
+        if (isFormValid) {
+            return true;
+        }
+        else {
+            App.showInvalidFields(invalidFields);
+            return false;
+        }
+    }
+
+    static showInvalidFields(invalidFields) {
+        invalidFields.forEach(field => {
+           field.classList.add('is-invalid');
+        });
     }
 
     deleteAllCards() {
@@ -92,9 +131,8 @@ class App {
     }
 
     sortCards() {
-        let sortRule = this.sortSelect.value;
 
-        this.cardsArray.sort(getRule(sortRule));
+        this.cardsArray.sort(getRule(this.sortSelect.value));
 
         function getRule(sortRule) {
             switch (sortRule) {
@@ -230,11 +268,11 @@ class App {
         this.addCardToStorage();
     }
 
-    hideButton(btn) {
+    static hideButton(btn) {
         btn.style.display = "none";
     }
 
-    showButton(btn) {
+    static showButton(btn) {
         btn.style.display = "inline-block";
     }
 
@@ -430,11 +468,11 @@ class Card {
 
     editCard() {
         app.fillForm(this);
-        app.hideButton(app.createButton);
-        app.hideButton(app.deleteButton);
+        App.hideButton(app.createButton);
+        App.hideButton(app.deleteButton);
         app.sortSelectGroup.style.display = 'none';
-        app.showButton(app.editButton);
-        app.showButton(app.cancelButton);
+        App.showButton(app.editButton);
+        App.showButton(app.cancelButton);
     }
 
     deleteCard() {
@@ -452,5 +490,6 @@ let appElement = document.querySelector('#app');
 
 let app = new App(appElement);
 
-//todo: add validation form
+//todo: add manage card block during editing (disable btns, fill color, etc)
+//todo: add choose several cards for delete
 //todo: add export to file
