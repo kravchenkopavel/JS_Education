@@ -12,6 +12,7 @@ class App {
         this.createButton = this.element.querySelector('#createButton');
         this.editButton = this.element.querySelector('#editButton');
         this.cancelButton = this.element.querySelector('#cancelButton');
+        this.deleteButton = this.element.querySelector('#deleteButton');
         this.sortSelect = this.element.querySelector('#sortSelect');
         this.sortSelectGroup = this.element.querySelector('#sortSelectGroup');
 
@@ -24,6 +25,8 @@ class App {
     init() {
         this.attachEvents();
         this.checkStorage();
+        this.manageDeleteButton();
+        this.manageSortSelectGroup();
     }
 
     attachEvents() {
@@ -31,6 +34,8 @@ class App {
             event => {
                 event.preventDefault();
                 this.createCard();
+                this.manageDeleteButton();
+                this.manageSortSelectGroup();
             });
 
         this.editButton.addEventListener('click',
@@ -44,7 +49,8 @@ class App {
                 this.hideButton(app.editButton);
                 this.hideButton(app.cancelButton);
                 this.showButton(app.createButton);
-                app.sortSelectGroup.style.display = 'block';
+                this.showButton(app.deleteButton);
+                this.manageSortSelectGroup();
             });
 
         this.cancelButton.addEventListener('click',
@@ -54,7 +60,19 @@ class App {
                 this.hideButton(app.editButton);
                 this.hideButton(app.cancelButton);
                 this.showButton(app.createButton);
-                app.sortSelectGroup.style.display = 'block';
+                this.showButton(app.deleteButton);
+                this.manageSortSelectGroup();
+            });
+
+        this.deleteButton.addEventListener('click',
+            event => {
+                event.preventDefault();
+                let message = this.cardsArray.length > 1 ? "You are going to delete all cards. Are you sure?" : "You are going to delete card. Are you sure?";
+                if (confirm(message)) {
+                    this.deleteAllCards();
+                    this.manageDeleteButton();
+                    this.manageSortSelectGroup();
+                }
             });
 
         this.sortSelect.addEventListener('change',
@@ -65,6 +83,12 @@ class App {
                 App.clearCardsBlock();
                 this.checkStorage();
             });
+    }
+
+    deleteAllCards() {
+        this.cardsArray = [];
+        localStorage.setItem('todoCards', JSON.stringify(this.cardsArray));
+        App.clearCardsBlock();
     }
 
     sortCards() {
@@ -226,6 +250,31 @@ class App {
         }
     }
 
+    manageDeleteButton() {
+        let currentSize = this.cardsArray.length;
+        if (currentSize < 1) {
+            this.deleteButton.style.display = 'none';
+        }
+        if (currentSize == 1) {
+            this.deleteButton.textContent = 'Delete';
+            this.deleteButton.style.display = 'inline-block';
+        }
+        if (currentSize > 1) {
+            this.deleteButton.textContent = 'Delete all';
+            this.deleteButton.style.display = 'inline-block';
+        }
+    }
+
+    manageSortSelectGroup() {
+        let currentSize = this.cardsArray.length;
+        if (currentSize <= 1) {
+            this.sortSelectGroup.style.display = 'none';
+        }
+        if (currentSize > 1) {
+            this.sortSelectGroup.style.display = 'block';
+        }
+    }
+
     addCardToStorage() {
         let stringifyCardsArray = JSON.stringify(this.cardsArray);
         localStorage.setItem('todoCards', stringifyCardsArray);
@@ -331,6 +380,8 @@ class Card {
             event.preventDefault();
             if (confirm("You are going to delete card. Are you sure?")) {
                 this.deleteCard();
+                app.manageDeleteButton();
+                app.manageSortSelectGroup();
             }
         });
 
@@ -380,6 +431,7 @@ class Card {
     editCard() {
         app.fillForm(this);
         app.hideButton(app.createButton);
+        app.hideButton(app.deleteButton);
         app.sortSelectGroup.style.display = 'none';
         app.showButton(app.editButton);
         app.showButton(app.cancelButton);
@@ -400,6 +452,5 @@ let appElement = document.querySelector('#app');
 
 let app = new App(appElement);
 
-//todo: add delete all btn
 //todo: add validation form
 //todo: add export to file
