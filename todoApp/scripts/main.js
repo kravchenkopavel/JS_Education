@@ -329,7 +329,9 @@ class Card {
         let deleteButton =  this.cardUI.querySelector('.delete-button');
         deleteButton.addEventListener('click', event => {
             event.preventDefault();
-            this.deleteCard();
+            if (confirm("You are going to delete card. Are you sure?")) {
+                this.deleteCard();
+            }
         });
 
         let completeButton =  this.cardUI.querySelector('.complete-button');
@@ -398,4 +400,6 @@ let appElement = document.querySelector('#app');
 
 let app = new App(appElement);
 
+//todo: add delete all btn
+//todo: add validation form
 //todo: add export to file
